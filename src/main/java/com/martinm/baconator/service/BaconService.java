@@ -24,23 +24,15 @@ public class BaconService {
   public Map<String, Object> getBaconData(int howmuch) {
     Map<String, Object> response = new HashMap<>();
 
-    List<Map<String, Object>> items = new ArrayList<>();
     String runId = UUID.randomUUID().toString();
     long globalStart = Instant.now().toEpochMilli();
 
     response.put("runId", runId);
     response.put("start", globalStart);
 
+    List<Map<String, Object>> items = new ArrayList<>();
     for (int i = 0; i < howmuch; i++) {
-      long start = Instant.now().toEpochMilli();
-      List<String> data = fetchBaconData();
-      long end = Instant.now().toEpochMilli();
-
-      Map<String, Object> item = new HashMap<>();
-      item.put("start", start);
-      item.put("end", end);
-      item.put("duration", formatDuration(end - start));
-      item.put("data", data);
+      var item = fetchBaconItem();
 
       items.add(item);
     }
@@ -50,6 +42,20 @@ public class BaconService {
     response.put("items", items);
 
     return response;
+  }
+
+  private  Map<String, Object> fetchBaconItem(){
+    long start = Instant.now().toEpochMilli();
+    List<String> data = fetchBaconData();
+    long end = Instant.now().toEpochMilli();
+
+    Map<String, Object> item = new HashMap<>();
+    item.put("start", start);
+    item.put("end", end);
+    item.put("duration", formatDuration(end - start));
+    item.put("data", data);
+
+    return item;
   }
 
   private List<String> fetchBaconData() {
